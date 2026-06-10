@@ -1,5 +1,6 @@
+import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from time import perf_counter
 
 from sqlalchemy.orm import Session
@@ -40,6 +41,56 @@ class BatchClassificationResult:
     results: list[ClassificationResult]
 
 
+@dataclass(frozen=True)
+class DeadlinePriorityDecision:
+    priority: PriorityLevel
+    detected_deadline: str | None
+    due_date: date | None
+    days_until_due: int | None
+    reason: str
+
+
+URGENT_KEYWORD_RE = re.compile(
+    r"\b(asap|urgent|immediately|critical|right away|as soon as possible)\b",
+    flags=re.IGNORECASE,
+)
+WEEKDAY_TO_INDEX = {
+    "monday": 0,
+    "tuesday": 1,
+    "wednesday": 2,
+    "thursday": 3,
+    "friday": 4,
+    "saturday": 5,
+    "sunday": 6,
+}
+MONTH_TO_NUMBER = {
+    "jan": 1,
+    "january": 1,
+    "feb": 2,
+    "february": 2,
+    "mar": 3,
+    "march": 3,
+    "apr": 4,
+    "april": 4,
+    "may": 5,
+    "jun": 6,
+    "june": 6,
+    "jul": 7,
+    "july": 7,
+    "aug": 8,
+    "august": 8,
+    "sep": 9,
+    "sept": 9,
+    "september": 9,
+    "oct": 10,
+    "october": 10,
+    "nov": 11,
+    "november": 11,
+    "dec": 12,
+    "december": 12,
+}
+
+
 def extract_classification_input(email: Email) -> EmailPriorityInput | None:
     body = (email.body_cleaned or "").strip()
     if not body:
@@ -50,6 +101,126 @@ def extract_classification_input(email: Email) -> EmailPriorityInput | None:
         subject=(email.subject or "(No Subject)").strip()[:512],
         body_cleaned=body,
     )
+
+
+def current_system_date() -> date:
+    return datetime.now().date()
+
+
+def _next_weekday(today: date, weekday_index: int) -> date:
+    days_ahead = (weekday_index - today.weekday()) % 7
+    return today + timedelta(days=days_ahead)
+
+
+def _end_of_week(today: date) -> date:
+    friday_index = WEEKDAY_TO_INDEX["friday"]
+    return today + timedelta(days=friday_index - today.weekday())
+
+
+def detect_deadline(text: str, *, today: date | None = None) -> tuple[str | None, date | None]:
+    today = today or current_system_date()
+    lowered = text.lower()
+
+    if re.search(r"\b(today|end of day|eod)\b", lowered):
+        return "today", today
+    if re.search(r"\b(tomorrow|next day)\b", lowered):
+        return "tomorrow", today + timedelta(days=1)
+    if re.search(r"\b(end of week|end-of-week|eow)\b", lowered):
+        return "end of week", _end_of_week(today)
+    if re.search(r"\bnext week\b", lowered):
+        days_until_next_monday = (7 - today.weekday()) % 7
+        if days_until_next_monday == 0:
+            days_until_next_monday = 7
+        return "next week", today + timedelta(days=days_until_next_monday)
+
+    for weekday, index in WEEKDAY_TO_INDEX.items():
+        if re.search(rf"\b(?:by|before|on|due\s+)?{weekday}\b", lowered):
+            return weekday, _next_weekday(today, index)
+
+    iso_match = re.search(r"\b(\d{4})-(\d{1,2})-(\d{1,2})\b", text)
+    if iso_match:
+        year, month, day = (int(part) for part in iso_match.groups())
+        try:
+            due = date(year, month, day)
+            return iso_match.group(0), due
+        except ValueError:
+            pass
+
+    month_match = re.search(
+        r"\b("
+        + "|".join(MONTH_TO_NUMBER)
+        + r")\s+(\d{1,2})(?:,\s*(\d{4}))?\b",
+        lowered,
+        flags=re.IGNORECASE,
+    )
+    if month_match:
+        month_text, day_text, year_text = month_match.groups()
+        year = int(year_text) if year_text else today.year
+        month = MONTH_TO_NUMBER[month_text.lower()]
+        day = int(day_text)
+        try:
+            due = date(year, month, day)
+            if not year_text and due < today:
+                due = date(today.year + 1, month, day)
+            return month_match.group(0), due
+        except ValueError:
+            pass
+
+    return None, None
+
+
+def deterministic_priority_decision(
+    email: Email,
+    *,
+    detected_intent: str,
+    today: date | None = None,
+) -> DeadlinePriorityDecision | None:
+    today = today or current_system_date()
+    text = " ".join(
+        part.strip()
+        for part in (email.subject or "", email.body_cleaned or "", email.body or "")
+        if part and part.strip()
+    )
+
+    if URGENT_KEYWORD_RE.search(text):
+        return DeadlinePriorityDecision(
+            priority="urgent",
+            detected_deadline=None,
+            due_date=None,
+            days_until_due=None,
+            reason="urgent keyword present",
+        )
+
+    detected_deadline, due_date = detect_deadline(text, today=today)
+    if due_date is not None:
+        days_until_due = (due_date - today).days
+        if days_until_due <= 1:
+            priority: PriorityLevel = "urgent"
+            reason = "deadline is overdue, today, or tomorrow"
+        elif days_until_due <= 5:
+            priority = "important"
+            reason = "deadline is within 2-5 days"
+        else:
+            priority = "low"
+            reason = "deadline is not near"
+        return DeadlinePriorityDecision(
+            priority=priority,
+            detected_deadline=detected_deadline,
+            due_date=due_date,
+            days_until_due=days_until_due,
+            reason=reason,
+        )
+
+    if detected_intent == "action_request":
+        return DeadlinePriorityDecision(
+            priority="low",
+            detected_deadline=None,
+            due_date=None,
+            days_until_due=None,
+            reason="actionable email with no near deadline",
+        )
+
+    return None
 
 
 def _utc_now() -> datetime:
@@ -259,6 +430,35 @@ async def classify_email_record(
             classified=True,
             priority="noise",
             message="Empty cleaned body; classified as noise.",
+        )
+
+    today = current_system_date()
+    deterministic = deterministic_priority_decision(email, detected_intent=detected_intent, today=today)
+    if deterministic is not None:
+        email.priority = deterministic.priority
+        if commit:
+            db.commit()
+            db.refresh(email)
+        print(
+            "PRIORITY CLASSIFICATION DEADLINE DECISION:",
+            {
+                "email_id": email.id,
+                "detected_deadline": deterministic.detected_deadline,
+                "current_date": today.isoformat(),
+                "due_date": deterministic.due_date.isoformat() if deterministic.due_date else None,
+                "days_until_due": deterministic.days_until_due,
+                "classification_reason": deterministic.reason,
+                "final_priority": deterministic.priority,
+                "detected_intent": detected_intent,
+                "duration_ms": round((perf_counter() - started) * 1000, 2),
+            },
+        )
+        return ClassificationResult(
+            email_id=email.id,
+            gmail_message_id=email.gmail_message_id,
+            classified=True,
+            priority=deterministic.priority,
+            message=f"Priority classified by deadline rules: {deterministic.reason}.",
         )
 
     try:
