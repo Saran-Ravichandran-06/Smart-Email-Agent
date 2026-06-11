@@ -44,11 +44,11 @@ export default function EmailList({
           <h2 className="text-sm font-semibold">Inbox</h2>
           <Button
             type="button"
-            variant="outline"
+
             size="sm"
             onClick={onSync}
             disabled={loading}
-            className="h-7 gap-1 px-2 text-xs"
+            className="h-7 gap-1 px-2 text-xs bg-green-600 hover:bg-green-700 text-white border border-green-600"
           >
             <RefreshCw className={cn('size-3', loading && 'animate-spin')} />
             Sync
@@ -108,3 +108,4 @@ export default function EmailList({
     </div>
   )
 }
+
