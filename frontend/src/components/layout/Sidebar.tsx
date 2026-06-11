@@ -25,10 +25,10 @@ export default function Sidebar() {
       >
         {!collapsed && (
           <div className="min-w-0">
-            <p className="truncate text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <p className="truncate text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-500">
               Smart Email Agent
             </p>
-            <p className="truncate text-sm font-semibold">Communication Hub</p>
+            <p className="truncate text-sm font-bold text-blue-900 dark:text-blue-800">Communication Hub</p>
           </div>
         )}
         <Button
