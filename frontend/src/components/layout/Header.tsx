@@ -9,12 +9,12 @@ export default function Header() {
   const isLoading = useAppStore((state) => state.isLoading())
 
   return (
-    <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-border bg-background px-6 select-none">
+    <header className="flex h-24 shrink-0 items-center justify-between border-b border-border bg-background px-6 select-none">
       <div>
-        <h1 className="text-lg font-semibold tracking-tight">
+        <h1 className="text-2xl font-bold tracking-tight">
           {getRouteLabel(location.pathname)}
         </h1>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm font-medium text-muted-foreground">
           Smart Email & Communication Agent
         </p>
       </div>

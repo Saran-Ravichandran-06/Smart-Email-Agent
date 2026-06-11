@@ -19,16 +19,16 @@ export default function Sidebar() {
     >
       <div
         className={cn(
-          'flex h-[72px] items-center border-b border-border',
+          'flex h-24 items-center border-b border-border',
           collapsed ? 'justify-center px-2' : 'justify-between px-4',
         )}
       >
         {!collapsed && (
           <div className="min-w-0">
-            <p className="truncate text-xs font-medium uppercase tracking-wider text-blue-600 dark:text-blue-500">
+            <p className="truncate text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-500">
               Smart Email Agent
             </p>
-            <p className="truncate text-sm font-bold text-blue-900 dark:text-blue-800">Communication Hub</p>
+            <p className="truncate text-base font-black tracking-tight text-blue-800 dark:text-blue-800">Communication Hub</p>
           </div>
         )}
         <Button
