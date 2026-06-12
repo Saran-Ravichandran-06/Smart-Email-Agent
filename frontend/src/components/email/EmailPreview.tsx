@@ -85,7 +85,7 @@ export default function EmailPreview() {
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Message
             </h3>
-            <div className="rounded-md border border-border bg-card p-4">
+            <div className="h-65 overflow-y-auto rounded-md border border-border bg-card p-4">
               <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
                 {cleanedBody ?? selectedEmail.body}
               </pre>
