@@ -28,7 +28,6 @@ export default function TasksPage() {
 
   return (
     <PageContainer
-      title="Tasks"
       description="AI-extracted tasks from your emails."
     >
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -74,3 +73,4 @@ export default function TasksPage() {
     </PageContainer>
   )
 }
+

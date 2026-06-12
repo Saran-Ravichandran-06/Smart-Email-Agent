@@ -53,7 +53,6 @@ export default function SettingsPage() {
 
   return (
     <PageContainer
-      title="Settings"
       description="Gmail connection, sync controls, and reply preferences."
     >
       <div className="mx-auto max-w-4xl space-y-4">
@@ -188,3 +187,4 @@ export default function SettingsPage() {
     </PageContainer>
   )
 }
+

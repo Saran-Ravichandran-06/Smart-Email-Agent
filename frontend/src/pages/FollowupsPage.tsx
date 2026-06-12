@@ -29,7 +29,6 @@ export default function FollowupsPage() {
 
   return (
     <PageContainer
-      title="Follow-Ups"
       description="Stale threads that may need a follow-up message."
     >
       <div className="mb-4 flex justify-end">
@@ -60,3 +59,4 @@ export default function FollowupsPage() {
     </PageContainer>
   )
 }
+

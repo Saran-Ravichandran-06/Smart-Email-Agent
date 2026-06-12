@@ -40,8 +40,7 @@ export default function EmailList({
   return (
     <div className="flex h-full min-h-0 flex-col border-r border-border bg-card">
       <div className="flex min-h-[108px] shrink-0 flex-col justify-center border-b border-border p-4">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold">Inbox</h2>
+        <div className="mb-3 flex items-center justify-end gap-2">
           <Button
             type="button"
 
@@ -108,4 +107,5 @@ export default function EmailList({
     </div>
   )
 }
+
 
