@@ -107,7 +107,7 @@ export default function SettingsPage() {
             <Button
               type="button"
               size="sm"
-              variant="outline"
+              className="bg-red-600 hover:bg-red-700 text-white"
               onClick={reconnectGmail}
               disabled={loading || syncing || scanning || refreshing}
             >
@@ -136,7 +136,7 @@ export default function SettingsPage() {
             size="sm"
             onClick={() => void handleSync()}
             disabled={loading || syncing || scanning || refreshing}
-            className="gap-1.5"
+            className="gap-1.5 bg-green-600 hover:bg-green-700 text-white"
           >
             {syncing && <LoadingSpinner className="h-3.5 w-3.5 text-primary-foreground" />}
             {syncing ? 'Syncing…' : 'Sync emails'}

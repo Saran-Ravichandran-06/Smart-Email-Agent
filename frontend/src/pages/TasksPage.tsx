@@ -50,11 +50,10 @@ export default function TasksPage() {
         </div>
         <Button
           type="button"
-          variant="outline"
+          className="gap-1 bg-yellow-500 hover:bg-yellow-600 text-yellow-950 border border-yellow-500"
           size="sm"
           onClick={() => void reload()}
           disabled={loading}
-          className="gap-1"
         >
           <RefreshCw className={cn('size-3.5', loading && 'opacity-50')} />
           Refresh
@@ -73,4 +72,5 @@ export default function TasksPage() {
     </PageContainer>
   )
 }
+
 

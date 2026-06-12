@@ -39,20 +39,7 @@ export default function EmailList({
 
   return (
     <div className="flex h-full min-h-0 flex-col border-r border-border bg-card">
-      <div className="flex min-h-[108px] shrink-0 flex-col justify-center border-b border-border p-4">
-        <div className="mb-3 flex items-center justify-end gap-2">
-          <Button
-            type="button"
-
-            size="sm"
-            onClick={onSync}
-            disabled={loading}
-            className="h-7 gap-1 px-2 text-xs bg-green-600 hover:bg-green-700 text-white border border-green-600"
-          >
-            <RefreshCw className={cn('size-3', loading && 'animate-spin')} />
-            Sync
-          </Button>
-        </div>
+      <div className="flex shrink-0 items-center justify-between border-b border-border p-4 min-h-[64px]">
         <div className="flex flex-wrap gap-1">
           {FILTERS.map(({ value, label }) => (
             <button
@@ -70,6 +57,16 @@ export default function EmailList({
             </button>
           ))}
         </div>
+        <Button
+          type="button"
+          size="sm"
+          onClick={onSync}
+          disabled={loading}
+          className="h-7 gap-1 px-2 text-xs bg-green-600 hover:bg-green-700 text-white border border-green-600"
+        >
+          <RefreshCw className={cn('size-3', loading && 'animate-spin')} />
+          Sync
+        </Button>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">
