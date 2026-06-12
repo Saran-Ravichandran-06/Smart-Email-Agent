@@ -56,69 +56,69 @@ export default function EmailPreview() {
 
   return (
     <div className="flex h-full min-h-0 overflow-hidden bg-background">
-      <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex min-h-[108px] shrink-0 items-center border-b border-border px-6 py-4">
-        <div className="flex w-full flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <h2 className="text-lg font-semibold leading-tight">
-              {selectedEmail.subject || '(No subject)'}
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              From {selectedEmail.sender}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {formatDateTime(selectedEmail.received_at)}
-            </p>
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+        <div className="px-6 py-6">
+          <div className="flex w-full flex-wrap items-start justify-between gap-3 mb-6">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-xl font-bold leading-tight">
+                {selectedEmail.subject || '(No subject)'}
+              </h2>
+              <p className="mt-2 text-sm text-foreground font-medium">
+                {selectedEmail.sender}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {formatDateTime(selectedEmail.received_at)}
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-col items-end gap-2">
+              <Link
+                to={`/email/${selectedEmail.id}`}
+                className="inline-flex h-8 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium hover:bg-accent"
+              >
+                <ExternalLink className="size-3.5" />
+                Full view
+              </Link>
+            </div>
           </div>
-          <div className="flex shrink-0 flex-col items-end gap-2">
-            <Link
-              to={`/email/${selectedEmail.id}`}
-              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium hover:bg-accent"
-            >
-              <ExternalLink className="size-3.5" />
-              Full view
-            </Link>
-          </div>
+
+          <section className="mt-6">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Message
+            </h3>
+            <div className="rounded-md border border-border bg-card p-4">
+              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
+                {cleanedBody ?? selectedEmail.body}
+              </pre>
+            </div>
+          </section>
         </div>
-      </div>
 
-      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-4">
-        <section>
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Message
-          </h3>
-          <div className="h-65 overflow-y-auto rounded-md border border-border bg-card p-4">
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
-              {cleanedBody ?? selectedEmail.body}
-            </pre>
-          </div>
-        </section>
+        <div className="px-6 pb-6 space-y-6">
+          <section>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Extracted tasks
+            </h3>
+            <TaskList
+              tasks={tasks}
+              loading={tasksLoading}
+              error={tasksError}
+              compact
+              onRetry={reloadDetail}
+            />
+          </section>
 
-        <section>
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Extracted tasks
-          </h3>
-          <TaskList
-            tasks={tasks}
-            loading={tasksLoading}
-            error={tasksError}
-            compact
-            onRetry={reloadDetail}
-          />
-        </section>
-
-        <section>
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Follow-up status
-          </h3>
-          <FollowupStatus
-            followup={threadFollowup}
-            email={selectedEmail}
-            emailId={selectedEmail.id}
-            loading={detailLoading}
-          />
-        </section>
-      </div>
+          <section>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Follow-up status
+            </h3>
+            <FollowupStatus
+              followup={threadFollowup}
+              email={selectedEmail}
+              emailId={selectedEmail.id}
+              loading={detailLoading}
+            />
+          </section>
+        </div>
       </div>
     </div>
   )
