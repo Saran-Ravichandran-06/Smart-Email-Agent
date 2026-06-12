@@ -138,7 +138,7 @@ function ReplyComposer({ emailId }: ReplyComposerProps) {
       <div className="mx-auto w-full max-w-3xl">
 
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Reply draft</h1>
+
         <div className="mt-3 space-y-1 text-sm">
           <p>
             <span className="text-muted-foreground">To: </span>

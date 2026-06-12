@@ -19,7 +19,7 @@ export default function Sidebar() {
     >
       <div
         className={cn(
-          'flex h-24 items-center border-b border-border',
+          'flex h-20 items-center border-b border-border',
           collapsed ? 'justify-center px-2' : 'justify-between px-4',
         )}
       >
