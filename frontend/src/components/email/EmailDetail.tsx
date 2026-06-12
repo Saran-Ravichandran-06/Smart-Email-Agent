@@ -78,7 +78,7 @@ export default function EmailDetail({ emailId }: EmailDetailProps) {
       </div>
       <div className="mx-auto w-full max-w-3xl">
 
-      <header className="border-b border-border pb-4">
+      <header className="pb-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h1 className="text-2xl font-semibold tracking-tight">
@@ -133,7 +133,7 @@ export default function EmailDetail({ emailId }: EmailDetailProps) {
             />
               </section>
 
-              <div className="border-t border-border pt-6">
+              <div className="pt-0">
                 <Link className={buttonVariants()} to={replyLink}>
                   Generate draft
                 </Link>
