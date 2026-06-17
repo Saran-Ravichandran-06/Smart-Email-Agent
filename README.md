@@ -13,7 +13,7 @@
 [![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com/)
 [![Ollama](https://img.shields.io/badge/Ollama-black?style=for-the-badge&logo=ollama)](https://ollama.ai/)
 
-AI-assisted Gmail inbox for detecting actionable emails, extracting tasks, tracking follow-ups, and drafting/sending replies.
+AI-assisted Gmail inbox for tracking emails, extracting tasks, tracking follow-ups, and drafting/sending replies.
 
 </div>
 
